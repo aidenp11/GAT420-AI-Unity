@@ -5,9 +5,10 @@ using UnityEngine.UIElements;
 
 public class AIAutonomousAgent : AIAgent
 {
-    public AIPerception seekPerception = null;
-    public AIPerception fleePerception = null;
-    public AIPerception flockPerception = null;
+    [SerializeField] AIPerception seekPerception = null;
+    [SerializeField] AIPerception fleePerception = null;
+    [SerializeField] AIPerception flockPerception = null;
+    [SerializeField] AIPerception obstaclePerception = null;
 
     private void Update()
     {
@@ -42,7 +43,24 @@ public class AIAutonomousAgent : AIAgent
             }
         }
 
-        transform.position = Utilities.Wrap(transform.position, new Vector3(-10, -10, -10), new Vector3(10, 10, 10));
+        if (obstaclePerception != null)
+        {
+            if (((RayCastPerception)obstaclePerception).CheckDirection(Vector3.forward))
+            {
+                Vector3 open = Vector3.zero;
+                if (((RayCastPerception)obstaclePerception).GetOpenDirection(ref open))
+                {
+                    movement.ApplyForce(GetSteeringForce(open));
+                }
+            }
+            var gameObjects = obstaclePerception.GetGameObjects();
+        }
+
+        Vector3 acceleration = movement.Acceleration;
+        acceleration.y = 0;
+        movement.Acceleration = acceleration;
+
+        transform.position = Utilities.Wrap(transform.position, new Vector3(-25, -1, -20), new Vector3(25, 10, 50));
     }
 
     private Vector3 Seek(GameObject target)
