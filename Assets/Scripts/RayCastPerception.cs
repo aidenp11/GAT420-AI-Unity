@@ -36,4 +36,34 @@ public class RayCastPerception : AIPerception
 
         return result.ToArray();
     }
+
+    public bool GetOpenDirection(ref Vector3 openDirection)
+    {
+        Vector3[] directions = Utilities.GetDirectionsInCircle(numRaycast, maxAngle);
+        foreach (var direction in directions)
+        {
+            // cast ray from transform position towards direction (use game object orientation)
+            Ray ray = new Ray(transform.position, transform.rotation * direction);
+            // if there is NO raycast hit then that is an open direction
+            if (!Physics.Raycast(ray, out RaycastHit raycastHit, distance, layerMask))
+            {
+                Debug.DrawRay(ray.origin, ray.direction * distance, Color.green);
+                // set open direction
+                openDirection = ray.direction;
+                return true;
+            }
+        }
+
+        // no open direction
+        return false;
+    }
+
+    public bool CheckDirection(Vector3 direction)
+    {
+        // create ray in direction (use game object orientation)
+        Ray ray = new Ray(transform.position, transform.rotation * direction);
+        // check ray cast
+        return Physics.Raycast(ray, distance, layerMask);
+
+    }
 }

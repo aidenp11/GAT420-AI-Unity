@@ -50,17 +50,17 @@ public class AIAutonomousAgent : AIAgent
                 Vector3 open = Vector3.zero;
                 if (((RayCastPerception)obstaclePerception).GetOpenDirection(ref open))
                 {
-                    movement.ApplyForce(GetSteeringForce(open));
+                    movement.ApplyForce(GetSteeringForce(open) * 25);
                 }
             }
-            var gameObjects = obstaclePerception.GetGameObjects();
+            //var gameObjects = obstaclePerception.GetGameObjects();
         }
 
         Vector3 acceleration = movement.Acceleration;
         acceleration.y = 0;
         movement.Acceleration = acceleration;
 
-        transform.position = Utilities.Wrap(transform.position, new Vector3(-25, -1, -20), new Vector3(25, 10, 50));
+        transform.position = Utilities.Wrap(transform.position, new Vector3(-25, -1, -20), new Vector3(25, 10, 20));
     }
 
     private Vector3 Seek(GameObject target)
