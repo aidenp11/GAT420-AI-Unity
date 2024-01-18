@@ -45,12 +45,13 @@ public class AIAutonomousAgent : AIAgent
 
         if (obstaclePerception != null)
         {
-            if (((RayCastPerception)obstaclePerception).CheckDirection(Vector3.forward))
+            if (((AISphereCast)obstaclePerception).CheckDirection(Vector3.forward))
             {
                 Vector3 open = Vector3.zero;
-                if (((RayCastPerception)obstaclePerception).GetOpenDirection(ref open))
+                if (((AISphereCast)obstaclePerception).GetOpenDirection(ref open))
                 {
-                    movement.ApplyForce(GetSteeringForce(open) * 25);
+                    Debug.DrawLine(transform.position, transform.position + open, Color.green);
+                    movement.ApplyForce(GetSteeringForce(open) * 15);
                 }
             }
             //var gameObjects = obstaclePerception.GetGameObjects();
