@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class AINavNode : MonoBehaviour
 {
 	[SerializeField] public List<AINavNode> neighbors = new List<AINavNode>();
+	public float Cost { get; set; } = float.MaxValue;
+	public AINavNode Parent { get; set; } = null;
 
 	public AINavNode GetRandomNeighbor()
 	{
