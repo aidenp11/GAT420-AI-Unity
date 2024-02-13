@@ -1,56 +1,153 @@
 using System.Collections;
+
 using System.Collections.Generic;
+
 using System.Linq;
+
 using UnityEngine;
 
+
+
+[RequireComponent(typeof(AINavAgent))]
+
 public class AINavPath : MonoBehaviour
+
 {
-	[SerializeField] private AINavNode startNode;
 
-	public AINavNode targetNode { get; set; } = null;
-	public Vector3 destination 
-	{ 
-		get 
-		{ 
-			return (targetNode != null) ? targetNode.transform.position : Vector3.zero; 
-		} 
-	}
+    public enum ePathType
 
-	private void Start()
-	{
-		targetNode = (startNode != null) ? startNode : AINavNode.GetRandomAINavNode(); 
-		
-	}
+    {
 
-	public bool HasPath()
-	{
-		return targetNode != null;
-	}
+        Waypoint,
 
-	public AINavNode GetNextAINavNode(AINavNode node)
-	{
-		return node.GetRandomNeighbor();
-	}
+        Dijkstra,
 
-	/*
-	public AINavNode GetNearestAINavNode()
-	{
-		var nodes = AINavNode.GetAINavNodes().ToList();
-		SortAINavNodesByDistance(nodes);
+        AStar
 
-		return (nodes.Count == 0) ? null : nodes[0];
-	}
+    }
 
-	public void SortAINavNodesByDistance(List<AINavNode> nodes)
-	{
-		nodes.Sort(CompareDistance);
-	}
 
-	public int CompareDistance(AINavNode a, AINavNode b)
-	{
-		float squaredRangeA = (a.transform.position - transform.position).sqrMagnitude;
-		float squaredRangeB = (b.transform.position - transform.position).sqrMagnitude;
-		return squaredRangeA.CompareTo(squaredRangeB);
-	}
-	*/
+    
+    [SerializeField] private ePathType pathType;
+
+
+
+    AINavAgent agent;
+
+    List<AINavNode> path = new List<AINavNode>();
+
+
+
+    public AINavNode targetNode { get; set; } = null;
+
+    public Vector3 destination
+    {
+        get
+
+        {
+
+            return (targetNode != null) ? targetNode.transform.position : Vector3.zero;
+
+        }
+
+        set
+
+        {
+
+            if (pathType == ePathType.Waypoint)
+
+            {
+
+                targetNode = agent.GetNearestAINavNode(value);
+
+            }
+            else if (pathType == ePathType.Dijkstra || pathType == ePathType.AStar)
+
+            {
+                AINavNode startNode = agent.GetNearestAINavNode();
+                AINavNode endNode = agent.GetNearestAINavNode(value);
+
+                GeneratePath(startNode, endNode);
+                targetNode = startNode;
+
+            }
+
+        }
+
+    }
+
+
+
+    private void Start()
+    {
+        agent = GetComponent<AINavAgent>();
+    }
+
+    public bool HasTarget()
+    {
+        return targetNode != null;
+    }
+
+    public AINavNode GetNextAINavNode(AINavNode node)
+    {
+        if (pathType == ePathType.Waypoint)
+        {
+            return node.GetRandomNeighbor();
+        }
+        if (pathType == ePathType.Dijkstra || pathType == ePathType.AStar)
+        {
+            return GetNextPathAINaveNode(node);
+        }
+
+        return null;
+    }
+
+    private void GeneratePath(AINavNode start, AINavNode end)
+    {
+        AINavNode.ResetNodes();
+        if (pathType == ePathType.Dijkstra) AINavDijkstra.Generate(start, end, ref path);
+        if (pathType == ePathType.AStar) AIAStar.Generate(start, end, ref path);
+    }
+
+    private AINavNode GetNextPathAINaveNode(AINavNode node)
+    {
+        if (path.Count == 0)
+        {
+            return null;
+
+        }
+
+        int index = path.FindIndex(pathNode => pathNode == node);
+
+        if (index + 1 == path.Count || index == -1)
+        {
+            return null;
+        }
+
+        AINavNode nextNode = path[index + 1];
+
+        return nextNode;
+
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Debug.Log(path.Count);
+        if (path.Count == 0) return;
+
+        var pathArray = path.ToArray();
+
+        for (int i = 1; i < path.Count - 1; i++)
+        {
+            Gizmos.color = Color.black;
+            Gizmos.DrawSphere(pathArray[i].transform.position + Vector3.up, 1);
+        }
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(pathArray[0].transform.position + Vector3.up, 1);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(pathArray[pathArray.Length - 1].transform.position + Vector3.up, 1);
+    }
+
 }

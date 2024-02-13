@@ -17,8 +17,8 @@ TagManager:
   - World
   - NavNode
   - 
-  - 
-  - 
+  - Player
+  - Enemy
   - 
   - 
   - 
