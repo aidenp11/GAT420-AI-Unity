@@ -11,6 +11,11 @@ public class AIPatrolState : AIState
         AIStateTransition transition = new AIStateTransition(nameof(AIIdleState));
         transition.AddCondition(new FloatCondition(agent.destinationDistance, Condition.Predicate.LESS, 0));
         transitions.Add(transition);
+
+        transition = new AIStateTransition(nameof(AIChaseState));
+        transition.AddCondition(new BoolCondition(agent.enemySeen));
+        transition.AddCondition(new FloatCondition(agent.enemyHealth, Condition.Predicate.GREATER, 0));
+        transitions.Add(transition);
     }
 
     public override void OnEnter()

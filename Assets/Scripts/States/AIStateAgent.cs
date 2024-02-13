@@ -24,6 +24,7 @@ public class AIStateAgent : AIAgent
         stateMachine.AddState(nameof(AIAttackState), new AIAttackState(this));
         stateMachine.AddState(nameof(AIDeathState), new AIDeathState(this));
         stateMachine.AddState(nameof(AIIdleState), new AIIdleState(this));
+        stateMachine.AddState(nameof(AIHitState), new AIHitState(this));
         stateMachine.AddState(nameof(AIPatrolState), new AIPatrolState(this));
         stateMachine.AddState(nameof(AIChaseState), new AIChaseState(this));
 
@@ -85,6 +86,10 @@ public class AIStateAgent : AIAgent
 
     private void Attack()
     {
+        
+        
+
+        Debug.Log("Attack");
         // check for collision with surroundings
         var colliders = Physics.OverlapSphere(transform.position, 1);
         foreach (var collider in colliders)
@@ -98,5 +103,6 @@ public class AIStateAgent : AIAgent
                 stateAgent.ApplyDamage(Random.Range(20, 50));
             }
         }
+        
     }
 }

@@ -15,8 +15,7 @@ public class AIHitState : AIState
 
     public override void OnEnter()
     {
-        agent.movement.Stop();
-        agent.movement.Velocity = Vector3.zero;
+        agent.movement.Velocity = Vector3.forward * -5f;
         agent.animator?.SetTrigger("Hit");
         agent.timer.value = 2;
        

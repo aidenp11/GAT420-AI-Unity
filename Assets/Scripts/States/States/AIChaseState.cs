@@ -11,6 +11,7 @@ public class AIChaseState : AIState
         AIStateTransition transition = new AIStateTransition(nameof(AIAttackState));
         transition.AddCondition(new BoolCondition(agent.enemySeen));
         transition.AddCondition(new FloatCondition(agent.enemyDistance, Condition.Predicate.LESS, 1));
+        transition.AddCondition(new FloatCondition(agent.enemyHealth, Condition.Predicate.GREATER, 0));
         transitions.Add(transition);
 
         transition = new AIStateTransition(nameof(AIIdleState));
@@ -22,7 +23,7 @@ public class AIChaseState : AIState
     {
         agent.movement.Resume();
         initialSpeed = agent.movement.maxSpeed;
-        agent.movement.maxSpeed *= 2;
+        agent.movement.maxSpeed *= 1.5f;
     }
 
     public override void OnUpdate()

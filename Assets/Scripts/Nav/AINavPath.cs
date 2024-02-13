@@ -132,7 +132,7 @@ public class AINavPath : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Debug.Log(path.Count);
+        //Debug.Log(path.Count);
         if (path.Count == 0) return;
 
         var pathArray = path.ToArray();
